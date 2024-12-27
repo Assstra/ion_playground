@@ -1,0 +1,4 @@
+# bprc (bpadmin) startup configuration file for the loopback test.
+
+# Start the daemons
+s

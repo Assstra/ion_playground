@@ -1,0 +1,7 @@
+# ipnrc configuration file using TCP
+
+# Add egress plan
+# a plan <destination_node_id> <protocol>/<destination_ip>:4556
+a plan 1 tcp/127.0.0.1:4556
+
+# Important: run AFTER bpadmin (bprc file)

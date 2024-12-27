@@ -1,0 +1,20 @@
+# bprc (bpadmin) config file using TCP
+
+# Init command
+1
+
+# Add schema (Endpoint identifier)
+# a schema <schema_name> <engine_handler> <administration_program>
+a schema ipn 'ipnfw' 'ipnadminep'
+
+# Add endpoints to declare nodes
+# a endpoint ipn:<node_id>.<service_id> <q/x>
+# q to queue if no application accepting bundle, x to discard bundles (packets)
+a endpoint ipn:1.1 q
+a endpoint ipn:1.2 q
+
+# Add an induct (ingress rule)
+a induct tcp 0.0.0.0:4556 tcpcli
+
+# Add an outduct (egress)
+a outduct tcp 127.0.0.1:4556 tcpclo

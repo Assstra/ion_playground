@@ -1,0 +1,21 @@
+# Ionrc (ionadmin) configuration file using TCP protocol
+
+# Initialization command
+# Declare node 1 (ipn:1)
+# Use default sdr (Default storage parameters for the node)
+1 1 ''
+
+# Start node
+s
+
+# Define transmission opportunity between 2 nodes (loopback here)
+# a contact <contact_start_time> <contact_end_time> <source_node_id> <dest_node_id> <max_data_rate>
+a contact +1 +3600 1 1 100000
+
+# Specifies distance between nodes
+# a range <earliest_time_distance_between_nodes> <latest_time_distance_between_nodes> <node_1_id> <node_2_id> <distance_in_light_seconds>
+a range +1 +3600 1 1 1
+
+# Define the maximum rate at which data will be produced & consumed
+m production 1000000
+m consumption 1000000
