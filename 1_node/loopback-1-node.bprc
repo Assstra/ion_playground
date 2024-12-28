@@ -13,6 +13,12 @@ a schema ipn 'ipnfw' 'ipnadminep'
 a endpoint ipn:1.1 q
 a endpoint ipn:1.2 q
 
+# Declare a protocol. 
+# a protocol <protocol_name> <frame_length> <overhead>
+# The "frame_length" parameter specifies the total size of a frame.
+# The "overhead" parameter is the portion of the frame allocated for headers.
+a protocol tcp 1400 100
+
 # Add an induct (ingress rule)
 a induct tcp 0.0.0.0:4556 tcpcli
 
