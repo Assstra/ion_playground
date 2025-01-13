@@ -1,0 +1,107 @@
+## Run the following command to start ION node:
+##  % ionstart -I "host2-2-nodes"
+
+## begin ionadmin
+# Initialization command
+# Declare node 2 (ipn:2)
+# Use default sdr (Default storage parameters for the node)
+1 2 ""
+
+# start ion node
+s
+
+# Define transmission opportunity between 2 nodes
+# a contact <contact_start_time> <contact_end_time> <source_node_id> <dest_node_id> <max_data_rate>
+a contact +1 +3600 1 1 100000
+
+# Warning ! The contacts are unidirectional, so we have to declare each one.
+a contact +1 +3600 1 2 100000
+a contact +1 +3600 2 1 100000
+a contact +1 +3600 2 2 100000
+
+# Specifies distance between nodes
+# a range <earliest_time_distance_between_nodes> <latest_time_distance_between_nodes> <node_1_id> <node_2_id> <distance_in_light_seconds>
+a range +1 +3600 1 1 1
+
+# Note that ranges cover both directions
+a range +1 +3600 2 2 1
+a range +1 +3600 2 1 1
+
+# set this node to consume and produce a mean of 1000000 bytes/second.
+m production 1000000
+m consumption 1000000
+## end ionadmin 
+
+## begin ltpadmin 
+
+# Initialization command (command 1) & Total number of export sessions managed by the LTP engine .
+#   (This value should be estimated at the sum
+#   of maximum round-trip times (in seconds) for all "spans."
+#   Suggest throwing 20% higher number of sessions to account for extra-
+#   long sessions which contain an actual retransmission.)
+1 32
+
+# Add a span. (a connection) 
+
+# a span <engine_number> <session_export_limit> <session_import_limit> <byte_segments> <block_size_aggregation_limit> <block_time_aggregation_limit>
+# byte_segments                 => standard ethernet frame size (accounting for headers overhead)
+# block_size_aggregation_limit  => maximum data sent in 1 second in a session
+# block_time_aggregation_limit  => if this time passes, the block is sent anyway
+
+# Note: **single** quotes below are important
+a span 1 10 10 1400 10000 1 'udplso 192.168.122.182:1113'
+
+# Run the link service output command above && input task below (listen for incoming traffic).
+s 'udplsi 192.168.122.97:1113'
+## end ltpadmin
+
+## begin bpadmin
+
+## begin bpadmin
+# This should be run AFTER ionadmin and BEFORE ipnadmin
+# or dtnadmin.
+
+# Initialization command (command 1).
+1 ipn:2.0
+
+# Add schema (Endpoint identifier)
+# a schema <schema_name> <engine_handler> <administration_program>
+a scheme ipn 'ipnfw' 'ipnadminep'
+
+# Add endpoints.
+# Establish endpoints ipn:2.0, ipn:2.1, and ipn:2.2 on the local node.
+# ipn:2.0 is expected for custodian traffic. If a bundle cannot be sent, the custodian stores it and retries until success
+a endpoint ipn:2.0 q
+a endpoint ipn:2.1 q
+a endpoint ipn:2.2 q
+
+# Add a protocol.
+# a protocol <protocol_name> <frame_length> <overhead>
+# The "frame_length" parameter specifies the total size of a frame.
+# The "overhead" parameter is the portion of the frame allocated for headers.
+a protocol ltp 1400 100
+
+# Add an local induct (ingress rule)
+# The induct will listen on port 1113, the IANA assigned default DTN LTP port
+a induct tcp 192.168.122.97:4556 ltpcli
+
+# Add an local outduct (egress rule)
+a outduct tcp 192.168.122.97:4556 ltpclo
+
+# Add an outduct. (send to host2)
+a outduct tcp 192.168.122.182:4556 ltpclo
+
+# Start bundle protocol engine, also running all of the induct, outduct,
+# and administration programs defined above.
+s
+## end bpadmin 
+
+## begin ipnadmin
+
+# Add an egress plan (to yourself).
+a plan 2 tcp/192.168.122.97:4556
+
+# Bundles to be transmitted to node number 2 (the other node).
+a plan 1 tcp/192.168.122.182:4556
+
+## end ipnadmin
