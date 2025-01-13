@@ -5,7 +5,7 @@
 # Initialization command
 # Declare node 1 (ipn:1)
 # Use default sdr (Default storage parameters for the node)
-1 1 ""
+1 1 ''
 
 # start ion node
 s
