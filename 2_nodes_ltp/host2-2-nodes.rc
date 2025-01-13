@@ -57,8 +57,6 @@ s 'udplsi 192.168.122.97:1113'
 ## end ltpadmin
 
 ## begin bpadmin
-
-## begin bpadmin
 # This should be run AFTER ionadmin and BEFORE ipnadmin
 # or dtnadmin.
 
