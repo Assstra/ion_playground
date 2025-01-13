@@ -49,7 +49,8 @@ m consumption 1000000
 # block_time_aggregation_limit  => if this time passes, the block is sent anyway
 
 # Note: **single** quotes below are important
-a span 1 10 10 1400 10000 1 'udplso 192.168.122.182:1113'
+a span 1 10 10 1400 10000 1 'udplso 192.168.122.182:1113' (to host 1)
+a span 2 10 10 1400 10000 1 'udplso 192.168.122.97:1113' (to yourself)
 
 # Run the link service output command above && input task below (listen for incoming traffic).
 s 'udplsi 192.168.122.97:1113'
@@ -62,7 +63,7 @@ s 'udplsi 192.168.122.97:1113'
 # or dtnadmin.
 
 # Initialization command (command 1).
-1 ipn:2.0
+1
 
 # Add schema (Endpoint identifier)
 # a schema <schema_name> <engine_handler> <administration_program>
@@ -83,13 +84,13 @@ a protocol ltp 1400 100
 
 # Add an local induct (ingress rule)
 # The induct will listen on port 1113, the IANA assigned default DTN LTP port
-a induct tcp 192.168.122.97:4556 ltpcli
+a induct ltp 2 ltpcli
 
 # Add an local outduct (egress rule)
-a outduct tcp 192.168.122.97:4556 ltpclo
+a outduct ltp 2 ltpclo
 
 # Add an outduct. (send to host2)
-a outduct tcp 192.168.122.182:4556 ltpclo
+a outduct ltp 1 ltpclo
 
 # Start bundle protocol engine, also running all of the induct, outduct,
 # and administration programs defined above.
@@ -99,9 +100,9 @@ s
 ## begin ipnadmin
 
 # Add an egress plan (to yourself).
-a plan 2 tcp/192.168.122.97:4556
+a plan 2 ltp/2
 
-# Bundles to be transmitted to node number 2 (the other node).
-a plan 1 tcp/192.168.122.182:4556
+# Bundles to be transmitted to node number 1 (the other node).
+a plan 1 ltp/1
 
 ## end ipnadmin
